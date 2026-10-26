@@ -122,3 +122,26 @@ def test_actualizar_producto_datos_invalidos(api_autenticada):
 def test_eliminar_producto_inexistente_responde_404(api_autenticada):
     respuesta = api_autenticada.delete("/api/productos/999")
     assert respuesta.status == 404
+
+
+def test_producto_creado_aparece_en_la_lista(api_autenticada):
+    datos = {"nombre": "Audífonos Gamer", "precio": 199.99, "stock": 15}
+    creado = api_autenticada.post("/api/productos", data=datos).json()
+    lista = api_autenticada.get("/api/productos").json()
+    assert len(lista) == 4
+    assert creado["id"] in [p["id"] for p in lista]
+
+
+def test_producto_eliminado_ya_no_aparece_en_la_lista(api_autenticada):
+    assert api_autenticada.delete("/api/productos/1").status == 204
+    ids = [p["id"] for p in api_autenticada.get("/api/productos").json()]
+    assert ids == [2, 3]
+
+
+def test_producto_actualizado_se_guarda(api_autenticada):
+    datos = {"nombre": "Teclado Mecánico RGB", "precio": 350.00, "stock": 8}
+    api_autenticada.put("/api/productos/1", data=datos)
+    producto = api_autenticada.get("/api/productos/1").json()
+    assert producto["nombre"] == "Teclado Mecánico RGB"
+    assert producto["precio"] == 350.00
+    assert producto["stock"] == 8

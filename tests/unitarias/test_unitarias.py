@@ -73,3 +73,9 @@ def test_limites_precio_producto(precio, valido):
 def test_limites_stock_producto(stock, valido):
     errores = validar_producto("Mouse Gamer", 50.0, stock)
     assert (errores == []) == valido
+
+
+
+@pytest.mark.parametrize("precio", ["100", None, True])
+def test_precio_no_numerico_es_invalido(precio):
+    assert validar_producto("Mouse Gamer", precio, 5) != []

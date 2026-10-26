@@ -61,6 +61,20 @@ def test_crear_producto_formulario_y_tabla(page: Page):
     expect(fila_nueva).to_contain_text("8")
 
 
+def test_editar_producto_muestra_mensaje_y_actualiza_tabla(page: Page):
+    iniciar_sesion(page)
+    page.get_by_role("row").filter(has_text="Monitor").get_by_role("link", name="Editar").click()
+    page.get_by_label("Nombre").fill("Monitor 27 pulgadas")
+    page.get_by_label("Precio").fill("1999.99")
+    page.get_by_label("Stock").fill("3")
+    page.get_by_role("button", name="Guardar").click()
+
+    expect(page.get_by_text("Producto actualizado")).to_be_visible()
+    fila = page.get_by_role("row").filter(has_text="Monitor 27 pulgadas")
+    expect(fila).to_contain_text("1999.99")
+    expect(fila).to_contain_text("3")
+
+
 def test_eliminar_producto_especifico_sin_efectos_colaterales(page: Page):
     # Regla: "Eliminar" borra ese producto, muestra "Producto eliminado" y los demás productos no cambian.
     # Detecta DEF-03: en productos.html siempre se envía eliminar pid=productos[0].id (borra Teclado en vez de Mouse).
