@@ -79,3 +79,16 @@ def test_limites_stock_producto(stock, valido):
 @pytest.mark.parametrize("precio", ["100", None, True])
 def test_precio_no_numerico_es_invalido(precio):
     assert validar_producto("Mouse Gamer", precio, 5) != []
+
+
+@pytest.mark.parametrize("usuario, password", [
+    (None, "Admin123"),
+    ("admin", None),
+    (None, None),
+])
+def test_credenciales_faltantes_son_invalidas(usuario, password):
+    assert validar_credenciales(usuario, password) != []
+
+
+def test_nombre_faltante_es_invalido():
+    assert validar_producto(None, 100.0, 5) != []

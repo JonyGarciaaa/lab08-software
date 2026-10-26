@@ -1,7 +1,7 @@
 # Informe · Laboratorio 8 · Pruebas automatizadas
 
-**Equipo:** 
-**Integrantes:** Jonathan Garcia - 1045222, Daniel Paz - 1200022
+**Equipo:** Lab8
+**Integrantes:** Jonathan Garcia - 1045222, Jose Daniel Paz - 1200022
 
 ## 1. Defectos encontrados
 
@@ -19,9 +19,9 @@ Tiempo: ejecuta `pytest tests/<nivel> -q` y anota el tiempo que reporta pytest.
 
 | Criterio | Unitarias | API | E2E |
 |---|---|---|---|
-| Número de pruebas | 26 | 21 | 7 |
-| Tiempo total de ejecución (s) | 0.16 s | 2.20 s | 8.28 s |
-| Tiempo promedio por prueba (s) | 0.006 s | 0.105 s | 1.183 s |
+| Número de pruebas | 30 | 24 | 9 |
+| Tiempo total de ejecución (s) | 0.17 s | 2.20 s | 9.28 s |
+| Tiempo promedio por prueba (s) | 0.006 s | 0.092 s | 1.031 s |
 | Defectos detectados (IDs) | DEF-01 | DEF-02 | DEF-03 |
 | ¿Qué cambio en la app rompería estas pruebas sin que haya un defecto? | Si cambian los nombres de las funciones o hacen que devuelvan otro formato en vez de una lista de errores. | Si cambian las rutas de la api, nombres de campos en los json o el formato del token. | Si cambian textos de botones, nombres de etiquetas o la estructura de las tablas en el html. |
 | Costo de mantenimiento (Alto / Medio / Bajo) y por qué | Bajo, porque son funciones simples en memoria y no dependen de nada externo. | Medio, porque si cambia el contrato de la api hay que actualizar las peticiones. | Alto, porque tardan bastante y cualquier cambio visual en el front las puede botar. |
@@ -30,9 +30,9 @@ Tiempo: ejecuta `pytest tests/<nivel> -q` y anota el tiempo que reporta pytest.
 
 El equipo de Inventario IS1 tiene un pipeline de CI. Recomienda qué pruebas correr:
 
-- en cada commit: solo correr las pruebas unitarias. Nos tomaron apenas 0.16 segundos para las 26 pruebas. Son casi instantaneas, no necesitan levantar servidor ni navegador, y nos avisan rapido si rompimos alguna regla antes de subir cambios.
+- en cada commit: solo correr las pruebas unitarias. Nos tomaron apenas 0.17 segundos para las 30 pruebas. Son casi instantaneas, no necesitan levantar servidor ni navegador, y nos avisan rapido si rompimos alguna regla antes de subir cambios.
 - en cada pull request: correr unitarias y de api. Juntas tardan menos de 3 segundos. Con esto revisamos que la logica y los endpoints con token sigan respondiendo bien antes de hacer merge a la rama principal.
-- antes de liberar a producción: correr toda la suite completa incluyendo las e2e. Tardan como 8 segundos por levantar chromium, pero vale la pena para probar la interfaz real con el usuario y ver que los botones y tablas no tengan clavos visuales ni efectos raros.
+- antes de liberar a producción: correr toda la suite completa incluyendo las e2e. Tardan como 9 segundos por levantar chromium, pero vale la pena para probar la interfaz real con el usuario y ver que los botones y tablas no tengan clavos visuales ni efectos raros.
 
 Justifica con tus datos de la tabla y con la pirámide de pruebas.
 Esto coincide con la piramide de pruebas: la base tiene bastantes pruebas unitarias porque son rapidas y baratas de correr, en medio van las de integracion/api para revisar contratos, y arriba dejamos pocas e2e para los flujos criticos porque son las mas lentas y fragiles de mantener.

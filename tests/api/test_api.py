@@ -124,6 +124,28 @@ def test_eliminar_producto_inexistente_responde_404(api_autenticada):
     assert respuesta.status == 404
 
 
+def test_login_sin_cuerpo_responde_400(api):
+    respuesta = api.post("/api/login")
+    assert respuesta.status == 400
+    assert "errores" in respuesta.json()
+
+
+def test_token_invalido_responde_401(playwright, base_url):
+    cliente = playwright.request.new_context(
+        base_url=base_url, extra_http_headers={"Authorization": "Bearer token-falso"}
+    )
+    assert cliente.get("/api/productos").status == 401
+    cliente.dispose()
+
+
+def test_obtener_producto_devuelve_el_correcto(api_autenticada):
+    producto = api_autenticada.get("/api/productos/2").json()
+    assert producto["id"] == 2
+    assert producto["nombre"] == "Mouse"
+    assert producto["precio"] == 95.50
+    assert producto["stock"] == 25
+
+
 def test_producto_creado_aparece_en_la_lista(api_autenticada):
     datos = {"nombre": "Audífonos Gamer", "precio": 199.99, "stock": 15}
     creado = api_autenticada.post("/api/productos", data=datos).json()

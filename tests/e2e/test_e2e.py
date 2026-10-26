@@ -10,6 +10,7 @@ Para grabar interacciones:        playwright codegen http://127.0.0.1:5000
                                   (con la app corriendo: python run.py)
 """
 import re
+import pytest
 from playwright.sync_api import Page, expect
 
 
@@ -33,10 +34,17 @@ def test_acceso_sin_sesion_redirige_a_login(page: Page):
     expect(page).to_have_url(re.compile(r"/login"))
 
 
+@pytest.mark.parametrize("ruta", ["/productos/nuevo", "/productos/1/editar"])
+def test_otras_paginas_sin_sesion_redirigen_a_login(page: Page, ruta):
+    page.goto(ruta)
+    expect(page).to_have_url(re.compile(r"/login"))
+
+
 def test_login_exitoso_muestra_bienvenida(page: Page):
     iniciar_sesion(page, "admin", "Admin123")
     expect(page).to_have_url(re.compile(r"/productos"))
     expect(page.locator("#bienvenida")).to_contain_text("Bienvenido, admin")
+    expect(page.get_by_text("Bienvenido, admin")).to_be_visible()
 
 
 def test_login_fallido_muestra_error(page: Page):
@@ -64,6 +72,8 @@ def test_crear_producto_formulario_y_tabla(page: Page):
 def test_editar_producto_muestra_mensaje_y_actualiza_tabla(page: Page):
     iniciar_sesion(page)
     page.get_by_role("row").filter(has_text="Monitor").get_by_role("link", name="Editar").click()
+    expect(page.get_by_label("Nombre")).to_have_value("Monitor")
+    expect(page.get_by_label("Stock")).to_have_value("5")
     page.get_by_label("Nombre").fill("Monitor 27 pulgadas")
     page.get_by_label("Precio").fill("1999.99")
     page.get_by_label("Stock").fill("3")
@@ -73,6 +83,8 @@ def test_editar_producto_muestra_mensaje_y_actualiza_tabla(page: Page):
     fila = page.get_by_role("row").filter(has_text="Monitor 27 pulgadas")
     expect(fila).to_contain_text("1999.99")
     expect(fila).to_contain_text("3")
+    expect(page.get_by_role("row").filter(has_text="Teclado")).to_be_visible()
+    expect(page.get_by_role("row").filter(has_text="Mouse")).to_be_visible()
 
 
 def test_eliminar_producto_especifico_sin_efectos_colaterales(page: Page):
